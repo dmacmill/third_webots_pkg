@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<robot name="Webots robot">
+    <webots>
+        <!-- https://robotics.stackexchange.com/questions/24596/how-do-i-integrate-webots-sensor-plugins-into-a-ros2-urdf-xacro-file -->
+        <device reference="top lidar" type="Lidar">
+            <ros>
+                <frameName>top_lidar_link</frameName>
+                <enabled>true</enabled>
+                <scanRate>10</scanRate>
+                <topicName>~/scan</topicName>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+
+        <plugin type="third_webots_pkg.third_webots_driver.ThirdWebotsDriver" />
+    </webots>
+</robot>

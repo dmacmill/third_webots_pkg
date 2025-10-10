@@ -1,0 +1,5 @@
+*.pyc
+*~
+
+worlds/.my_world.jpg
+worlds/.my_world.wbproj
