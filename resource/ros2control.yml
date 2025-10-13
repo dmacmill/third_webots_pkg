@@ -19,13 +19,12 @@ diffdrive_controller:
     # The real separation between wheels is not resulting in a perfect odometry
     # wheel_separation_multiplier: 1.112
 
-    use_stamped_vel: false
-    base_frame_id: "base_link"
-
-    # don't expect hall sensor, or position interface
-    open_loop: true           #
-    enable_odom_tf: true      # publish to 
-    use_feedback: true        # key for getting dead reckoning
+    use_stamped_vel: false     # subscribe to cmd_vel that uses twist_vel (newer ros2 versions)
+    base_frame_id: "base_link" # frame of robot base
+    odom_frame_id: "odom"      # frame of odometry base
+    enable_odom_tf: true       # publish to odom->base link for rviz
+    open_loop: true            # integrate wheel vels, like the one below kinda
+    use_feedback: true         # integrate wheel vels, dont use the position feedback. key for getting dead reckoning
     
     linear:
       x:
