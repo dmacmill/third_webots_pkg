@@ -12,6 +12,26 @@
             </ros>
         </device>
 
-        <plugin type="third_webots_pkg.third_webots_driver.ThirdWebotsDriver" />
+        <!-- <plugin type="third_webots_pkg.third_webots_driver.ThirdWebotsDriver" /> -->
+        <plugin type="webots_ros2_control::Ros2Control" />
+        
     </webots>
+
+    <!-- ros2_control params based on: -->
+    <!-- https://github.com/cyberbotics/webots_ros2/blob/master/webots_ros2_turtlebot/resource/turtlebot_webots.urdf -->
+    <ros2_control name="WebotsControl" type="system">
+        <hardware>
+            <plugin>webots_ros2_control::Ros2ControlSystem</plugin>
+        </hardware>
+        <joint name="right wheel motor">
+            <state_interface name="position" /> <!-- still needed despite not having hall sensor-->
+            <state_interface name="velocity"/>
+            <command_interface name="velocity" />
+        </joint>
+        <joint name="left wheel motor">
+            <state_interface name="position" />
+            <state_interface name="velocity"/>
+            <command_interface name="velocity" />
+        </joint>
+    </ros2_control>
 </robot>

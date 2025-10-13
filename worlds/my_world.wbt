@@ -17,6 +17,7 @@ Viewpoint {
   orientation 0.015477744469679013 -0.9978650301214457 -0.06344935844323255 5.65968877715667
   position -3.5714967993369715 -0.42817569220034307 3.513450514220017
   follow "my_robot"
+  basicTimeStep 20
 }
 TexturedBackground {
 }
@@ -76,6 +77,7 @@ Cabinet {
   }
 }
 Robot {
+  controller "<extern>"
   children [
     Lidar {
       translation 0.04 0 0.09
@@ -103,6 +105,10 @@ Robot {
       device [
         RotationalMotor {
           name "left wheel motor"
+        }
+        PositionSensor {
+          name "left wheel sensor"
+          resolution 0.00628
         }
       ]
       endPoint Solid {
@@ -139,6 +145,10 @@ Robot {
       device [
         RotationalMotor {
           name "right wheel motor"
+        }
+        PositionSensor {
+          name "right wheel sensor"
+          resolution 0.00628
         }
       ]
       endPoint Solid {
@@ -223,7 +233,6 @@ Robot {
   }
   physics Physics {
   }
-  controller "<extern>"
 }
 Radiator {
   translation -4.99608e-07 2.85 0.3
