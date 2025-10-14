@@ -4,7 +4,7 @@
         <!-- https://robotics.stackexchange.com/questions/24596/how-do-i-integrate-webots-sensor-plugins-into-a-ros2-urdf-xacro-file -->
         <device reference="top lidar" type="Lidar">
             <ros>
-                <frameName>top_lidar_link</frameName>
+                <frameName>top lidar</frameName>
                 <enabled>true</enabled>
                 <scanRate>10</scanRate>
                 <topicName>~/scan</topicName>
@@ -16,6 +16,11 @@
         <plugin type="webots_ros2_control::Ros2Control" />
         
     </webots>
+
+    <!-- 
+    See robot TF configuration in robot_model.urdf
+    Got that by updating wbt file and export Robot as a urdf
+    -->
 
     <!-- ros2_control params based on: -->
     <!-- https://github.com/cyberbotics/webots_ros2/blob/master/webots_ros2_turtlebot/resource/turtlebot_webots.urdf -->

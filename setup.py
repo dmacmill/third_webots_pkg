@@ -13,6 +13,7 @@ setup(
 	    ('share/' + package_name + '/worlds', ['worlds/my_world.wbt']),                 # in future 
 	    ('share/' + package_name + '/resource', [
             'resource/third_webots_robot.urdf',
+            'resource/robot_model.urdf',
             'resource/ros2control.yml'
         ]),
         ('share/' + package_name, ['package.xml']),
