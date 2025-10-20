@@ -17,7 +17,7 @@ diffdrive_controller:
     wheel_radius: 0.025
 
     # The real separation between wheels is not resulting in a perfect odometry
-    # wheel_separation_multiplier: 1.112
+    wheel_separation_multiplier: 1.112
 
     use_stamped_vel: false     # subscribe to cmd_vel that uses twist_vel (newer ros2 versions)
     base_frame_id: "base_link" # frame of robot base

@@ -30,7 +30,15 @@ def generate_launch_description():
     footprint_publisher = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
-        arguments= ['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint']
+        arguments= ['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
+        name="base_to_footprint_publisher"
+    )
+
+    map_to_odom_publisher = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        arguments=["0", "0", "0", "0", "0", "0", "map", "odom"],
+        name="map_to_odom_publisher"
     )
 
     # TF tree
@@ -91,6 +99,7 @@ def generate_launch_description():
         webots._supervisor,
         robot_state_publisher,
         footprint_publisher,
+        map_to_odom_publisher,
         waiting_nodes,
         my_robot_driver,
 

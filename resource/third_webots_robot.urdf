@@ -7,7 +7,7 @@
                 <frameName>top lidar</frameName>
                 <enabled>true</enabled>
                 <scanRate>10</scanRate>
-                <topicName>~/scan</topicName>
+                <topicName>/scan</topicName>
                 <alwaysOn>true</alwaysOn>
             </ros>
         </device>
