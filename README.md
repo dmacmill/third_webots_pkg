@@ -1,18 +1,45 @@
 # third_webots_pkg
+This is an example webots diffdrive robot that has Lidar and IMU capability. 
 
-Adding lidar and rest of TF tree:
+The wheels don't have hall sensors on purpose, this is for me to test SLAM with
+dead reckoning and some sensors, as well as other robot configurations. I will
+probably add the hall sensors back someday. With this robot body I have a good
+deal of control over how to map which is nice.
 
-1. open webots without ros2. open the world for editing and add a Lidar node to the 
-children in my_robot. save by clicking the icon on the screen or ctrl-shift-s
+I call it the third because the other two packages sucked :P.
 
-2. add a child shape to the lidar node. set that shapes geometry to cylinder, 
-appearance to whatever. 
+## Quickstart
+Build normally with `colcon build` and `source install/local_setup.bash`.
 
-3. see the lidar vis by setting View > optional rendering > show lidar rays
-there are by default 4 lidar ray layers, for 2D lidar we only need 1 so make sure 
-to set that.
+Then launch the whole sim minus mapping with
+`ros2 launch third_webots_pkg robot_launch.py`
 
-4. `third_webots_robot.urdf` setup the integration of the lidar next to the robot:
+In another terminal you can run mapping with 
+`ros2 launch third_webots_pkg mapping_launch.py`
+
+![Webots SLAM](webots_slam.png)
+
+
+## Files
+### `worlds/my_world.wbt`
+
+Taken from building a world and robot file from an empty webots world and going
+from there.
+
+Currently the robot in this world has its URDF counterpart living in
+`resource/robot_model.urdf`. Update it by running the world file in webots,
+right click `Robot "my_robot"` in the scene tree on the left and select "Export
+URDF". Save the new file and go into `launch/robot_launch.py` and update
+`robot_model_path` with the correct path name along with updating `setup.py`.
+
+See the lidar visuals by setting View > optional rendering > show lidar rays
+there are by default 4 lidar ray layers, for 2D lidar we only need 1 so make
+sure to set that.
+
+### `resource/third_webots_robot.urdf`
+
+This file hooks up the sensors (lidar and imu so far) to ros2 via the
+webots_ros2_driver plugins
 
 ```xml
 <webots>
@@ -25,13 +52,29 @@ to set that.
             <alwaysOn>true</alwaysOn>
         </ros>
     </device>
+
+    <plugin type="webots_ros2_driver::Ros2IMU">
+      <enabled>true</enabled>
+      <updateRate>20</updateRate>
+      <topicName>/imu</topicName>
+      <alwaysOn>true</alwaysOn>
+      <frameName>imu_link</frameName>
+      <inertialUnitName>imu</inertialUnitName> <!-- Ensure this matches whats in robot_model.urdf -->
+      <gyroName>gyro</gyroName>
+      <accelerometerName>accelerometer</accelerometerName>
+    </plugin>
+
     <plugin type="webots_ros2_control::Ros2Control" />
 </webots>
 ```
 
-5. below the webots tag in the same `third_webots_robot.urdf` file add what's necessary 
-for the webots_controller node. This will add controllers that we can see with the 
-command `ros2 service call /controller_manager/list_hardware_interfaces controller_manager_msgs/srv/ListHardwareInterfaces {}`
+This file also contains the necessary plugin information to integrate ros2
+diffdrive controls directly with webots motors.
+
+Many of the Hardware Interfaces necessary can be listed with this command after
+running `robot_launch.py`
+
+`ros2 service call /controller_manager/list_hardware_interfaces controller_manager_msgs/srv/ListHardwareInterfaces {}`
 
 ```xml
 <ros2_control name="WebotsControl" type="system">
@@ -55,7 +98,8 @@ Notice that we also add the position interface despite not using hall sensors.
 This is necessary for diffdrive_controller to work, but we can still use dead 
 reckoning by adjusting some settings below.
 
-6. Add file `ros2control.yml` (don't forget to add in setup.py and launch.py!)
+### `ros2control.yml`
+(Don't forget to add these in setup.py and launch.py!)
 
 ```yml
 controller_manager:
@@ -95,12 +139,9 @@ joint_state_broadcaster:
     base_frame_id: base_link
 ```
 
-The important parts are in diffdrive_controller for getting the names of what 
-diffdrive will be controlling, wheel separation and radius, open_loop and 
-use_feedback to ensure diffdrive doesn't use the position sensor that isn't 
-actually publishing anything. We will use dead reckoning. Turn these to false 
-if you are going to use hall sensors.
-
-7. Add this file to robot_launch.py, along with the nodes needed to launch 
-the controller manager with the diffdrive controller.
+The important parts are in diffdrive_controller for getting the names of what
+diffdrive will be controlling, wheel separation and radius, open_loop and
+use_feedback to ensure diffdrive doesn't use the position sensor that isn't
+actually publishing anything. We will use dead reckoning. Turn these to false if
+you are going to use hall sensors.
 

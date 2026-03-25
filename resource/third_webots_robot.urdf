@@ -12,6 +12,7 @@
             </ros>
         </device>
 
+        <!-- https://github.com/cyberbotics/webots_ros2/blob/master/webots_ros2_turtlebot/resource/turtlebot_webots.urdf -->
          <plugin type="webots_ros2_driver::Ros2IMU">
             <enabled>true</enabled>
             <updateRate>20</updateRate>
