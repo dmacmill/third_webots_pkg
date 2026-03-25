@@ -99,6 +99,12 @@ Robot {
       ]
       name "imu"
     }
+    Gyro {
+      name "gyro"
+    }
+    Accelerometer {
+      name "accelerometer"
+    }
     HingeJoint {
       jointParameters HingeJointParameters {
         axis 0 1 0

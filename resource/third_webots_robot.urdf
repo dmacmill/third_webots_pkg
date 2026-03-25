@@ -12,6 +12,17 @@
             </ros>
         </device>
 
+         <plugin type="webots_ros2_driver::Ros2IMU">
+            <enabled>true</enabled>
+            <updateRate>20</updateRate>
+            <topicName>/imu</topicName>
+            <alwaysOn>true</alwaysOn>
+            <frameName>imu_link</frameName>
+            <inertialUnitName>imu</inertialUnitName>
+            <gyroName>gyro</gyroName>
+            <accelerometerName>accelerometer</accelerometerName>
+        </plugin>
+
         <!-- <plugin type="third_webots_pkg.third_webots_driver.ThirdWebotsDriver" /> -->
         <plugin type="webots_ros2_control::Ros2Control" />
         
