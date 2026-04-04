@@ -21,7 +21,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(online_async_share),
         launch_arguments={
             'use_sim_time': use_sim_time,
-            'params_file': slam_toolbox_params_path
+            'slam_params_file': slam_toolbox_params_path
         }.items()
     )
 
