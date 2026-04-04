@@ -19,9 +19,9 @@ def generate_launch_description():
     ekf_config_path = os.path.join(package_dir, 'config', 'ekf.yaml')
     use_twist_stamped = 'ROS_DISTRO' in os.environ and (os.environ['ROS_DISTRO'] in ['rolling', 'jazzy', 'kilted'])
     if use_twist_stamped:
-        mappings = [('/diffdrive_controller/cmd_vel', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
+        mappings = [('/diffdrive_controller/cmd_vel', '/cmd_vel')]
     else:
-        mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
+        mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel')]
 
     webots = WebotsLauncher(
         world=os.path.join(package_dir, 'worlds', 'my_world.wbt'),
