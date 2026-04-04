@@ -15,7 +15,8 @@ def generate_launch_description():
     package_dir = get_package_share_directory('third_webots_pkg')
     robot_description_path = os.path.join(package_dir, 'resource', 'third_webots_robot.urdf')
     robot_model_path = os.path.join(package_dir, 'resource', 'robot_model.urdf')
-    ros2_control_params = os.path.join(package_dir, 'resource', 'ros2control.yml')
+    ros2_control_params = os.path.join(package_dir, 'config', 'ros2control.yml')
+    ekf_config_path = os.path.join(package_dir, 'config', 'ekf.yaml')
     use_twist_stamped = 'ROS_DISTRO' in os.environ and (os.environ['ROS_DISTRO'] in ['rolling', 'jazzy', 'kilted'])
     if use_twist_stamped:
         mappings = [('/diffdrive_controller/cmd_vel', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
@@ -94,6 +95,15 @@ def generate_launch_description():
         nodes_to_start=ros_control_spawners
     )
 
+    # EKF node
+    ekf_node = Node(
+        package="robot_localization",
+        executable="ekf_node",
+        name="ekf_filter_node",
+        output="screen",
+        parameters=[ekf_config_path]
+    )
+
     return LaunchDescription([
         webots,
         webots._supervisor,
@@ -102,6 +112,7 @@ def generate_launch_description():
         map_to_odom_publisher,
         waiting_nodes,
         my_robot_driver,
+        ekf_node,
 
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(

@@ -4,7 +4,7 @@ package_name = 'third_webots_pkg'
 
 setup(
     name=package_name,
-    version='0.0.0',
+    version='0.0.1',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -14,8 +14,12 @@ setup(
 	    ('share/' + package_name + '/worlds', ['worlds/my_world.wbt']),                 # in future 
 	    ('share/' + package_name + '/resource', [
             'resource/third_webots_robot.urdf',
-            'resource/robot_model.urdf',
-            'resource/ros2control.yml'
+            'resource/robot_model.urdf'
+        ]),
+        ('share/' + package_name + '/config', [
+            'config/ekf.yaml',
+            'config/mapper_params_online_async.yaml',
+            'config/ros2control.yml',
         ]),
         ('share/' + package_name, ['package.xml']),
     ],
