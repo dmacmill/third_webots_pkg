@@ -28,6 +28,7 @@ def generate_launch_description():
         ros2_supervisor=True
     )
 
+    # TF Tree, base_link->base_footprint
     footprint_publisher = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
@@ -35,14 +36,21 @@ def generate_launch_description():
         name="base_to_footprint_publisher"
     )
 
+    # TF Tree, map->odoms
     map_to_odom_publisher = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
         arguments=["0", "0", "0", "0", "0", "0", "map", "odom"],
         name="map_to_odom_publisher"
     )
+    map_to_odom_unfiltered_publisher = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        arguments=["0", "0", "0", "0", "0", "0", "map", "odom_unfiltered"],
+        name="map_to_odom_unfiltered_publisher"
+    )
 
-    # TF tree
+    # TF tree, base_link->everything else
     with open(robot_model_path, 'r') as f:
         robot_model = f.read()
     robot_state_publisher = Node(
@@ -50,7 +58,8 @@ def generate_launch_description():
         executable="robot_state_publisher",
         output="screen",
         parameters=[{
-            'robot_description': robot_model
+            'robot_description': robot_model,
+            'use_sim_time': use_sim_time
         }]
     )
 
@@ -101,7 +110,8 @@ def generate_launch_description():
         executable="ekf_node",
         name="ekf_filter_node",
         output="screen",
-        parameters=[ekf_config_path]
+        parameters=[{'use_sim_time': use_sim_time}, 
+                    ekf_config_path]
     )
 
     return LaunchDescription([
@@ -110,6 +120,7 @@ def generate_launch_description():
         robot_state_publisher,
         footprint_publisher,
         map_to_odom_publisher,
+        map_to_odom_unfiltered_publisher,
         waiting_nodes,
         my_robot_driver,
         ekf_node,
