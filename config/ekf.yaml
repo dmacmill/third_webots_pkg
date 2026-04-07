@@ -16,23 +16,63 @@ ekf_filter_node:
     ## vroll, vpitch, vyaw,
     ## ax,    ay,     az
 
-    odom0: /diffdrive_controller/odom
+    odom0: /diffdrive_controller/odom_fixed
     odom0_config: [true, true, false,  
                    false, false, false,
-                   true, false, true,
                    false, false, false,
+                   false, false, true,
                    false, false, false]
     odom0_queue_size: 2
     
-    imu0: /imu
+    imu0: /imu_fixed
     imu0_config: [false, false, false,
                   true, true, true,
-                  true, true, true,
                   false, false, false,
-                  true, true, true]
+                  true, true, true,
+                  false, false, false]
     imu0_queue_size: 2
+    # our imu does not automatically remove 9.81 m/s2 gravity, so remove it here
+    imu0_remove_gravitational_acceleration: true
 
 
-
+    ### Extra configs ###
+    
+    # will look at cmd vels
+    use_control: true
     # Which velocities are being controlled. Order is vx, vy, vz, vroll, vpitch, vyaw.
     control_config: [true, false, false, false, false, true]
+
+    # Places limits on how large the acceleration term will be. Should match your robot's kinematics.
+    acceleration_limits: [0.1, 0.0, 0.0, 0.0, 0.0, 3.4]
+    # Acceleration and deceleration limits are not always the same for robots.
+    deceleration_limits: [0.1, 0.0, 0.0, 0.0, 0.0, 4.5]
+    # If your robot cannot instantaneously reach its acceleration limit, the permitted change can be controlled with these
+    # gains
+    acceleration_gains: [0.8, 0.0, 0.0, 0.0, 0.0, 0.9]
+    # If your robot cannot instantaneously reach its deceleration limit, the permitted change can be controlled with these
+    # gains
+    deceleration_gains: [1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+    
+
+    ## x,     y,      z
+    ## roll,  pitch,  yaw,
+    ## vx,    vy,     vz,
+    ## vroll, vpitch, vyaw,
+    ## ax,    ay,     az
+
+    # process_noise_covariance: [0.05, 0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+    #                             0.0,    0.05, 0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+    #                             0.0,    0.0,    0.06, 0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+    #                             0.0,    0.0,    0.0,    0.03, 0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+    #                             0.0,    0.0,    0.0,    0.0,    0.03, 0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+    #                             0.0,    0.0,    0.0,    0.0,    0.0,    0.06, 0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+    #                             0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.025, 0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+    #                             0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.025, 0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+    #                             0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.04, 0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+    #                             0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.01, 0.0,    0.0,    0.0,    0.0,    0.0,
+    #                             0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.01, 0.0,    0.0,    0.0,    0.0,
+    #                             0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.75, 0.0,    0.0,    0.0,
+    #                             0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    10.0, 0.0,    0.0,
+    #                             0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    10.0, 0.0,
+    #                             0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    10.0]
+    # initial_estimate_covariance: [1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9]

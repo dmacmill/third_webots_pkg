@@ -104,6 +104,21 @@ def generate_launch_description():
         nodes_to_start=ros_control_spawners
     )
 
+    # Covariance filler node
+    covariance_filler_node = Node(
+        package="third_webots_pkg",
+        executable="covariance_filler",
+        name="covariance_filler",
+        output="screen",
+        parameters=[
+            {'imu_input_topic': '/imu'},
+            {'imu_output_topic': '/imu_fixed'},
+            {'odom_input_topic': '/diffdrive_controller/odom'},
+            {'odom_output_topic': '/diffdrive_controller/odom_fixed'},
+            {'use_sim_time': use_sim_time}
+        ]
+    )
+
     # EKF node
     ekf_node = Node(
         package="robot_localization",
@@ -123,6 +138,7 @@ def generate_launch_description():
         map_to_odom_unfiltered_publisher,
         waiting_nodes,
         my_robot_driver,
+        covariance_filler_node,
         ekf_node,
 
         launch.actions.RegisterEventHandler(
