@@ -1,7 +1,7 @@
 ### ekf config file ###
 ekf_filter_node:
   ros__parameters:
-    frequency: 16.0
+    frequency: 30.0
     two_d_mode: true
     publish_tf: true
     
@@ -19,7 +19,7 @@ ekf_filter_node:
     odom0: /diffdrive_controller/odom
     odom0_config: [true, true, false,  
                    false, false, false,
-                   false, false, false,
+                   true, false, false,
                    false, false, true,
                    false, false, false]
     odom0_queue_size: 5
@@ -28,7 +28,7 @@ ekf_filter_node:
     imu0_config: [false, false, false,
                   true, true, true,
                   false, false, false,
-                  true, true, true,
+                  false, false, false,
                   false, false, false]
     imu0_queue_size: 5
     # our imu does not automatically remove 9.81 m/s2 gravity, so remove it here
@@ -38,7 +38,7 @@ ekf_filter_node:
     ### Extra configs ###
     
     # will look at cmd vels
-    use_control: true
+    use_control: false
     # Which velocities are being controlled. Order is vx, vy, vz, vroll, vpitch, vyaw.
     control_config: [true, false, false, false, false, true]
 

@@ -16,9 +16,9 @@ class ImuCovarianceFiller(Node):
         self.imu_pub = self.create_publisher(Imu, self.imu_output_topic.value, 10)
 
     def imu_cb(self, msg: Imu):
-        msg.orientation_covariance = [0.001,0.0,0.0, 0.0,0.001,0.0, 0.0,0.0,0.001]
-        msg.angular_velocity_covariance = [0.1,0.0,0.0, 0.0,0.1,0.0, 0.0,0.0,0.1]
-        msg.linear_acceleration_covariance = [0.1,0.0,0.0, 0.0,0.1,0.0, 0.0,0.0,0.1]
+        msg.orientation_covariance = [0.0001,0.0,0.0, 0.0,0.0001,0.0, 0.0,0.0,0.0001]
+        msg.angular_velocity_covariance = [0.05,0.0,0.0, 0.0,0.05,0.0, 0.0,0.0,0.05]
+        msg.linear_acceleration_covariance = [0.05,0.0,0.0, 0.0,0.05,0.0, 0.0,0.0,0.05]
         self.imu_pub.publish(msg)
 
 

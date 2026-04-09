@@ -22,16 +22,16 @@ diffdrive_controller:
     use_stamped_vel: false                # subscribe to cmd_vel that uses twist_vel (newer ros2 versions)
     base_frame_id: "base_link"            # frame of robot base
     odom_frame_id: "odom_unfiltered"      # frame of odometry base
-    enable_odom_tf: true                  # publish to odom_unfiltered->base link for rviz
-    open_loop: true                       # integrate wheel vels, like dead reckoning
+    enable_odom_tf: false                  # publish to odom_unfiltered->base link for rviz
+    open_loop: false                       # integrate wheel vels, like dead reckoning
     use_feedback: true                    # use the encoder to verify dead reckoning vals
     # right now we use encoder on wheels
-    # set use_feedback to false to get dead reckoning back, but with encoder is better
+    # set use_feedback to false, open_loop to true to get dead reckoning back, but with encoder is better
 
     # NOTE: see "third_webots_pkg/covariance_filler.py" for actual covariances.
     # We publish there because webots_ros2::Ros2IMU plugin is borked.
-    pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
-    twist_covariance_diagonal: [0.005, 0.001, 0.001, 0.001, 0.001, 0.01]
+    pose_covariance_diagonal: [0.002, 0.002, 0.000, 0.000, 0.000, 0.001]
+    twist_covariance_diagonal: [0.0001, 0.000, 0.000, 0.000, 0.000, 0.0001]
 
 
     linear:
