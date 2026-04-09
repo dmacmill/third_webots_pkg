@@ -32,7 +32,7 @@ setup(
     entry_points={
         'console_scripts': [
             'third_webots_driver = third_webots_pkg.third_webots_driver:main',
-            'covariance_filler = third_webots_pkg.covariance_filler:main'
+            'imu_covariance_filler = third_webots_pkg.imu_covariance_filler:main'
         ],
     },
 )

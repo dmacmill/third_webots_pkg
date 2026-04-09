@@ -37,6 +37,7 @@ def generate_launch_description():
     )
 
     # TF Tree, map->odoms
+    # Do not use these while map frame is already active
     map_to_odom_publisher = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
@@ -105,16 +106,14 @@ def generate_launch_description():
     )
 
     # Covariance filler node
-    covariance_filler_node = Node(
+    imu_covariance_filler_node = Node(
         package="third_webots_pkg",
-        executable="covariance_filler",
-        name="covariance_filler",
+        executable="imu_covariance_filler",
+        name="imu_covariance_filler",
         output="screen",
         parameters=[
             {'imu_input_topic': '/imu'},
             {'imu_output_topic': '/imu_fixed'},
-            {'odom_input_topic': '/diffdrive_controller/odom'},
-            {'odom_output_topic': '/diffdrive_controller/odom_fixed'},
             {'use_sim_time': use_sim_time}
         ]
     )
@@ -134,11 +133,11 @@ def generate_launch_description():
         webots._supervisor,
         robot_state_publisher,
         footprint_publisher,
-        map_to_odom_publisher,
-        map_to_odom_unfiltered_publisher,
+        # map_to_odom_publisher,
+        # map_to_odom_unfiltered_publisher,
         waiting_nodes,
         my_robot_driver,
-        covariance_filler_node,
+        imu_covariance_filler_node,
         ekf_node,
 
         launch.actions.RegisterEventHandler(
