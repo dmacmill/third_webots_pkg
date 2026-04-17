@@ -6,7 +6,10 @@ dead reckoning and some sensors, as well as other robot configurations. I will
 probably add the hall sensors back someday. With this robot body I have a good
 deal of control over how to map which is nice.
 
-I call it the third because the other two packages sucked :P.
+---
+
+Now that I've added SLAM, I find it definitely helps to just use hall sensors.
+Will be important to know when buying stuff for IRL robot.
 
 ## Quickstart
 Build normally with `colcon build` and `source install/local_setup.bash`.
@@ -16,6 +19,10 @@ Then launch the whole sim minus mapping with
 
 In another terminal you can run mapping with 
 `ros2 launch third_webots_pkg mapping_launch.py`
+
+Or just
+`ros2 launch third_webots_pkg full_stack.py`
+for all of it
 
 ![Webots SLAM](webots_slam.png)
 
@@ -99,7 +106,6 @@ This is necessary for diffdrive_controller to work, but we can still use dead
 reckoning by adjusting some settings below.
 
 ### `ros2control.yml`
-(Don't forget to add these in setup.py and launch.py!)
 
 ```yml
 controller_manager:
@@ -123,13 +129,16 @@ diffdrive_controller:
     # The real separation between wheels is not resulting in a perfect odometry
     # wheel_separation_multiplier: 1.112
 
-    use_stamped_vel: false     # subscribe to cmd_vel that uses twist_vel (newer ros2 versions)
-    base_frame_id: "base_link" # frame of robot base
-    odom_frame_id: "odom"      # frame of odometry base
-    enable_odom_tf: true       # publish to odom->base link for rviz
+    use_stamped_vel: false           # subscribe to cmd_vel that uses twist_vel (newer ros2 versions)
+    base_frame_id: "base_link"       # frame of robot base
+    odom_frame_id: "odom_unfiltered" # frame of odometry base
+    enable_odom_tf: false      # publish to odom->base_link for rviz
     open_loop: true            # integrate wheel vels, like the one below kinda
     use_feedback: true         # integrate wheel vels, dont use the position feedback. key for getting dead reckoning
     
+    pose_covariance_diagonal: [0.0002, 0.0002, 0.000, 0.000, 0.000, 0.001]
+    twist_covariance_diagonal: [0.001, 0.000, 0.000, 0.000, 0.000, 0.001]
+
     linear:
       x:
         max_velocity: 0.15 # Maximal speed of robot
@@ -140,8 +149,31 @@ joint_state_broadcaster:
 ```
 
 The important parts are in diffdrive_controller for getting the names of what
-diffdrive will be controlling, wheel separation and radius, open_loop and
-use_feedback to ensure diffdrive doesn't use the position sensor that isn't
-actually publishing anything. We will use dead reckoning. Turn these to false if
-you are going to use hall sensors.
+diffdrive will be controlling, wheel separation, radius, covariance and such.
+`open_loop` and `use_feedback` ensures diffdrive doesn't use the position sensor
+that isn't actually publishing anything. This config above assumes dead
+reckoning. Turn those two to false if you are going to use hall sensors.
 
+Notice odom_frame_id is not just odom, this is because we will publish real odom
+in `/ekf_filter_node`. This is just where we publish raw odometery. So we set
+`enable_odom_tf` to false. Set it to true if you get rid of ekf and want to roll
+with pure odom again.
+
+### `ekf.yml`
+The config for the ekf_filter_node goes, see [robot_localization's example
+ekf.yaml](https://github.com/cra-ros-pkg/robot_localization/blob/rolling-devel/params/ekf.yaml)
+for what each config does.
+
+The important things to remember are that this node is where tf for odom to base
+link is published, both must not be messed with.
+
+`process_noise_covariance` is the hardest to configure for especially if you
+dont have the sensor or odom errors for the actual parts you are using. That's a
+problem with webots it seems.
+
+### `mapper_params_online_async.yaml`
+Config for online async SLAM. See [slam_toolbox's
+docs](https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#configuration)
+for more examples.
+
+I didn't mess with this much, just with min and max laser range.
