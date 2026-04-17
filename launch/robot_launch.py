@@ -15,18 +15,20 @@ def generate_launch_description():
     package_dir = get_package_share_directory('third_webots_pkg')
     robot_description_path = os.path.join(package_dir, 'resource', 'third_webots_robot.urdf')
     robot_model_path = os.path.join(package_dir, 'resource', 'robot_model.urdf')
-    ros2_control_params = os.path.join(package_dir, 'resource', 'ros2control.yml')
+    ros2_control_params = os.path.join(package_dir, 'config', 'ros2control.yml')
+    ekf_config_path = os.path.join(package_dir, 'config', 'ekf.yaml')
     use_twist_stamped = 'ROS_DISTRO' in os.environ and (os.environ['ROS_DISTRO'] in ['rolling', 'jazzy', 'kilted'])
     if use_twist_stamped:
-        mappings = [('/diffdrive_controller/cmd_vel', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
+        mappings = [('/diffdrive_controller/cmd_vel', '/cmd_vel')]
     else:
-        mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
+        mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel')]
 
     webots = WebotsLauncher(
         world=os.path.join(package_dir, 'worlds', 'my_world.wbt'),
         ros2_supervisor=True
     )
 
+    # TF Tree, base_link->base_footprint
     footprint_publisher = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
@@ -34,14 +36,22 @@ def generate_launch_description():
         name="base_to_footprint_publisher"
     )
 
+    # TF Tree, map->odoms
+    # Do not use these while map frame is already active
     map_to_odom_publisher = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
         arguments=["0", "0", "0", "0", "0", "0", "map", "odom"],
         name="map_to_odom_publisher"
     )
+    map_to_odom_unfiltered_publisher = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        arguments=["0", "0", "0", "0", "0", "0", "map", "odom_unfiltered"],
+        name="map_to_odom_unfiltered_publisher"
+    )
 
-    # TF tree
+    # TF tree, base_link->everything else
     with open(robot_model_path, 'r') as f:
         robot_model = f.read()
     robot_state_publisher = Node(
@@ -49,7 +59,8 @@ def generate_launch_description():
         executable="robot_state_publisher",
         output="screen",
         parameters=[{
-            'robot_description': robot_model
+            'robot_description': robot_model,
+            'use_sim_time': use_sim_time
         }]
     )
 
@@ -94,14 +105,40 @@ def generate_launch_description():
         nodes_to_start=ros_control_spawners
     )
 
+    # Covariance filler node
+    imu_covariance_filler_node = Node(
+        package="third_webots_pkg",
+        executable="imu_covariance_filler",
+        name="imu_covariance_filler",
+        output="screen",
+        parameters=[
+            {'imu_input_topic': '/imu'},
+            {'imu_output_topic': '/imu_fixed'},
+            {'use_sim_time': use_sim_time}
+        ]
+    )
+
+    # EKF node
+    ekf_node = Node(
+        package="robot_localization",
+        executable="ekf_node",
+        name="ekf_filter_node",
+        output="screen",
+        parameters=[{'use_sim_time': use_sim_time}, 
+                    ekf_config_path]
+    )
+
     return LaunchDescription([
         webots,
         webots._supervisor,
         robot_state_publisher,
         footprint_publisher,
-        map_to_odom_publisher,
+        # map_to_odom_publisher,
+        # map_to_odom_unfiltered_publisher,
         waiting_nodes,
         my_robot_driver,
+        imu_covariance_filler_node,
+        ekf_node,
 
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(

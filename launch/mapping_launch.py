@@ -11,7 +11,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
     package_dir = get_package_share_directory('third_webots_pkg')
 
-    slam_toolbox_params_path = os.path.join(package_dir, 'resource', 'mapper_params_online_async.yaml')
+    slam_toolbox_params_path = os.path.join(package_dir, 'config', 'mapper_params_online_async.yaml')
     online_async_share = PathJoinSubstitution([
         FindPackageShare('slam_toolbox'),
         'launch',
@@ -21,7 +21,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(online_async_share),
         launch_arguments={
             'use_sim_time': use_sim_time,
-            'params_file': slam_toolbox_params_path
+            'slam_params_file': slam_toolbox_params_path
         }.items()
     )
 

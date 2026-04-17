@@ -2,9 +2,9 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>third_webots_pkg</name>
-  <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="dmacmi.dm@gmail.com">daniel</maintainer>
+  <version>0.0.2</version>
+  <description>Webots robot with mapping</description>
+  <maintainer email="dmacmill@github.com">daniel</maintainer>
   <license>Apache-2.0</license>
 
   <depend>rclpy</depend>
@@ -16,6 +16,7 @@
   <depend>joint_state_broadcaster</depend>
   <depend>diff_drive_controller</depend>
   <depend>controller_manager</depend>
+  <depend>robot_localization</depend>
 
   <!-- only necessary for mapping -->
   <depend>slam_toolbox</depend>

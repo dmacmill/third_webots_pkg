@@ -4,18 +4,23 @@ package_name = 'third_webots_pkg'
 
 setup(
     name=package_name,
-    version='0.0.0',
+    version='0.0.1',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name + '/launch', ['launch/robot_launch.py']),              # remember these
         ('share/' + package_name + '/launch', ['launch/mapping_launch.py']),
+        ('share/' + package_name + '/launch', ['launch/full_stack_launch.py']),
 	    ('share/' + package_name + '/worlds', ['worlds/my_world.wbt']),                 # in future 
 	    ('share/' + package_name + '/resource', [
             'resource/third_webots_robot.urdf',
-            'resource/robot_model.urdf',
-            'resource/ros2control.yml'
+            'resource/robot_model.urdf'
+        ]),
+        ('share/' + package_name + '/config', [
+            'config/ekf.yaml',
+            'config/mapper_params_online_async.yaml',
+            'config/ros2control.yml',
         ]),
         ('share/' + package_name, ['package.xml']),
     ],
@@ -27,7 +32,8 @@ setup(
     license='Apache-2.0',
     entry_points={
         'console_scripts': [
-            'third_webots_driver = third_webots_pkg.third_webots_driver:main'
+            'third_webots_driver = third_webots_pkg.third_webots_driver:main',
+            'imu_covariance_filler = third_webots_pkg.imu_covariance_filler:main'
         ],
     },
 )
